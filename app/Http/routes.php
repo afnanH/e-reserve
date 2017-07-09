@@ -1,8 +1,8 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");   
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
  // header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
- header('Access-Control-Allow-Credentials: true');      
+ header('Access-Control-Allow-Credentials: true');
 
 use App\User;
 use App\District;
@@ -56,11 +56,12 @@ Route::post('/changeGovernment','HallController@changeGovernment');
 Route::post('/changeType','HallController@changeType');
 Route::post('/changecont','HallController@changecont');
 
+Route::POST('/GetEvents','HallController@GetEvents');
+
 Route::resource('/ContactUS','ContactUsController');
 Route::post('/SendContactUs','ContactUsController@SendContactUs');
 
 Route::post('/changeFacilty','HallController@changeFacilty');
-
 
 //Places
 Route::resource('/PlaceType','PlaceTypeController');
@@ -71,7 +72,7 @@ Route::resource('/PlaceType','PlaceTypeController');
 Route::resource('/Types','TypesController');
 Route::get('/updateTypes','TypesController@updateTypes');
 Route::any('/Types/destroy/{id}','TypesController@destroy');
-//Facilites Routes 
+//Facilites Routes
 Route::resource('/Facilites','FacilitesController');
 Route::get('/updateFacilites','FacilitesController@updateFacilites');
 Route::any('/Facilites/destroy/{id}','FacilitesController@destroy');
@@ -81,16 +82,26 @@ Route::resource('/Government','GovernmentController');
 Route::get('/updateGovernments','GovernmentController@updateGovernments');
 Route::any('/Government/destroy/{id}','GovernmentController@destroy');
 Route::get('/showallDistriGovernment/{id}','DistrictsController@showallDistriGovernment');
-//District 
+//District
 Route::resource('/Districts','DistrictsController');
 Route::get('/updateDistricts','DistrictsController@updateDistricts');
 Route::any('/Districts/destroy/{id}','DistrictsController@destroy');
-//Place Data 
+//Place Data
 Route::resource('/PlaceData','PlaceController');
 //
 //Schedule Routes
-Route::resource('/Schedule','SchaduleController');
+Route::resource('/Schadule','SchaduleController');
+
+//Route::get('/Schadule/my', 'SchaduleController@my');
+Route::get('/create', array('uses' => 'SchaduleController@create', 'as' => 'create'));
+
+Route::POST('/Schadule/store', 'SchaduleController@store');
+
 //End
 
+
+Route::get('/test', function () {
+    return view('test');
 });
 
+});

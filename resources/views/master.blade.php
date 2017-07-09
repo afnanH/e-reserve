@@ -154,7 +154,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
                     </a>
                 </li>
                 <li>
-                    <a href="/Schedule">
+                    <a href="/Schadule">
                         <i class="pe-7s-bell"></i>
                         <p>المواعيد</p>
                     </a>

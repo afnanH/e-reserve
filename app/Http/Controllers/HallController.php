@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Auth;
-use App\Http\Requests;
+//use App\Http\Requests;
 use DB;
 use App\Http\Controllers\Controller;
-use Request;
+//use Request;
+use Illuminate\Http\Request;
 use Excel;
 use File;
 use Illuminate\Support\Facades\Response;
@@ -18,6 +19,7 @@ use App\Type;
 use App\Government;
 use App\District;
 use App\Facility;
+use App\Schadule;
 use View;
 class HallController extends Controller
 {
@@ -1198,9 +1200,42 @@ class HallController extends Controller
     {
         $hall=Hall::find($id);
        $hallall=Hall::where('Place_Id',$hall->Place_Id)->get();
+       $events=Schadule::where('Hall_Id',$id)->get();
 
-        return view('halls.hall',compact('hall','hallall'));
+        return view('halls.hall',compact('hall','hallall','events'));
     }
+
+    public function GetEvents (Request $request)
+    {
+       //$hallall=Hall::where('User_Id',$hall->User_Id)->get();
+       $query=Schadule::where(['Hall_Id' => $request->id])->get();
+       $events = array();
+       foreach ($query as $e)
+       {
+           $result = array();
+
+           $stringStart = $e['Date_From'] . ' ' . $e['Time_From'];
+            $dateStart = new \DateTime($stringStart);
+             
+            $stringEnd = $e['Date_To'] . ' ' . $e['Time_To'];
+            $dateEnd = new \DateTime($stringEnd);
+
+            $result['title'] = $e['Event_Name'];
+            $result['start'] = $dateStart->format('Y-m-d H:i:s');
+            $result['end'] = $dateEnd->format('Y-m-d H:i:s');
+            $result['allDay'] = false;
+            $result['color'] = '#841851';
+            $result['className'] = $e['Hall_Id'];
+
+            // Merge the event array into the return array
+            array_push($events,$result);
+
+        }
+
+       return json_encode($events);
+    }
+    
+
     public function dd($id)
     {
         return view('halls.hall');

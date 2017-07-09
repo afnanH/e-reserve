@@ -168,7 +168,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
-
+        MaddHatter\LaravelFullcalendar\ServiceProvider::class,
     ],
 
     /*
@@ -223,9 +223,9 @@ return [
         'Datatables' =>  'Yajra\Datatables\Datatables',
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'Lava' => Khill\Lavacharts\Laravel\LavachartsServiceProvider::class
+        'Lava' => Khill\Lavacharts\Laravel\LavachartsServiceProvider::class,
 
-
+        'Calendar' => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
     ],
 
 ];

@@ -7,7 +7,7 @@ use App\Http\Requests;
 use Illuminate\Support\Facades\Input;
 use DB;
 use App\Http\Controllers\Controller;
-use App\Facilites;
+use App\Facility;
 use Image;
 use File;
 
@@ -22,7 +22,7 @@ class FacilitesController extends Controller
     {
 
         try{
-             $Facilites=Facilites::all();
+             $Facilites=Facility::all();
 
        return view('Tools.Facilites',compact('Facilites'));
 
@@ -42,7 +42,7 @@ class FacilitesController extends Controller
         $column_name = Input::get('name');
         $column_value = Input::get('value');
     
-        $Facilites = Facilites::whereId($ID)->first();
+        $Facilites = Facility::whereId($ID)->first();
         $Facilites-> $column_name=$column_value;
 
         $Facilites->save();
@@ -153,7 +153,7 @@ class FacilitesController extends Controller
     {
         try {
 
-           $Facilites=Facilites::find($id);
+           $Facilites=Facility::find($id);
         
         $Facilites->delete();
         return redirect('/Facilites');

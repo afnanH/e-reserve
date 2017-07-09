@@ -20,7 +20,8 @@
         "zizaco/entrust": "5.2.x-dev",
         "khill/lavacharts" : "3.0.*",
         "yajra/laravel-datatables-oracle": "^6.5",
-        "huynguyen/bootstrapvalidate": "^0.4.6"
+        "huynguyen/bootstrapvalidate": "^0.4.6",
+        "maddhatter/laravel-fullcalendar": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
