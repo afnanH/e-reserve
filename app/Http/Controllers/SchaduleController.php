@@ -69,39 +69,26 @@ class SchaduleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private function generalRequestRequired (Request $request)
-    {
-        $this->validate($request, [
-            'Name' => 'required',
-            'Price' => 'required|numeric',
-            'IsEvent' => 'required|numeric',
-            'Date_From' => 'required',
-            'Date_To' => 'required',
-            'Time_From' => 'required',
-            'Time_To' => 'required',
-            'Notes' => 'required',
-            'Event_Name' => 'required',
-            'Tele' => 'required',
-            'Hall_Id' => 'required'
-        ]);
-    }
     public function store(Request $request)
     {
         $rules = array(
             'Name' => 'required',
             'Price' => 'required|numeric',
             'IsEvent' => 'required|numeric',
-            'Date_From' => 'required',
-            'Date_To' => 'required',
-            'Time_From' => 'required',
-            'Time_To' => 'required',
+            'Date_From' => 'required|date_format:"Y-m-d"',
+            'Date_To' => 'required|date_format:"Y-m-d"',
+            'Start_M' => 'required',
+            'Start_H' => 'required',
+            'End_M' => 'required',
+            'End_H' => 'required',
             'Notes' => 'required',
             'Event_Name' => 'required',
-            'Tele' => 'required',
+            'Tele' => 'required|numeric',
             'Hall_Id' => 'required'
         );
-        $this->validate($request, $rules);
-        $input = $request->all();
+
+        
+            $input = $request->all();
 
             $event = new Schadule;
             
@@ -112,9 +99,8 @@ class SchaduleController extends Controller
             $dtEnd = new \DateTime;
             $dtEnd->setTime($request->input('End_H'), $request->input('End_M'));
             $event->Time_To = $dtEnd->format('H:i:s');
-            
-            
-            //$this->generalRequestRequired($request, $event);
+
+            $this->validate($request, $rules);
 
             $event->Name = $request->input('Name');
             $event->Price = $request->input('Price');
@@ -127,50 +113,61 @@ class SchaduleController extends Controller
             $event->Tele = $request->input('Tele');
             $event->Hall_Id = $request->input('Hall_Id');
             $event->User_Id = Auth::user()->id;
-            $event->save();
 
-            Session::flash('flash_message', 'Event successfully added!');
+            if($event->Date_To < $event->Date_From)
+            {
+                Session::flash('flash_message', 'Invalid date');
 
-            return redirect('/Schadule');
-        /*
-        try
-       {
-            $event = new Schadule;
-            
-            $dtStart = new \DateTime;
-            $dtStart->setTime($request->input('Start_H'), $request->input('Start_M'));
-            $event->Time_From = $dtStart->format('H:i:s');
-            
-            $dtEnd = new \DateTime;
-            $dtEnd->setTime($request->input('End_H'), $request->input('End_M'));
-            $event->Time_To = $dtEnd->format('H:i:s');
-            
-            
-            $this->generalRequestRequired($request, $event);
+                return redirect('/create');
+            }
+            if(($event->Time_To < $event->Time_From) && ($event->Date_To == $event->Date_From))
+            {
+                Session::flash('flash_message', 'Invalid time');
 
-            $event->Name = $request->input('Name');
-            $event->Price = $request->input('Price');
-            $event->IsEvent = $request->input('IsEvent');
-            $event->Date_From = $request->input('Date_From');
-            $event->Date_To = $request->input('Date_To');
-            
-            $event->Notes = $request->input('Notes');
-            $event->Event_Name = $request->input('Event_Name');
-            $event->Tele = $request->input('Tele');
-            $event->Hall_Id = $request->input('Hall_Id');
-            $event->User_Id = Auth::user()->id;
-            $event->save();
+                return redirect('/create');
+            }
+            $query1 = Schadule::where([
+                ['Hall_Id','=', $event->Hall_Id]])->get();
+  
+            if ($query1->count())
+            {
+                foreach($query1 as $q)
+                {    
+                    if( (($q->Date_From >= $event->Date_From) && ($q->Date_To <= $event->Date_To))
+                        || (($q->Date_From <= $event->Date_From) && ($q->Date_To >= $event->Date_To))
+                        || (($q->Date_From >= $event->Date_From) && ($q->Date_To >= $event->Date_To)
+                                && ($q->Date_From <= $event->Date_To))
+                        || (($q->Date_From <= $event->Date_From) && ($q->Date_To <= $event->Date_To)
+                                && ($q->Date_To >= $event->Date_From)))
 
-            Session::flash('flash_message', 'Event successfully added!');
+                    {
+                        if( (($q->Time_From >= $event->Time_From) && ($q->Time_To <= $event->Time_To))
+                            || (($q->Time_From <= $event->Time_From) && ($q->Time_To >= $event->Time_To))
+                            || (($q->Time_To >= $event->Time_From) && ($q->Time_From >= $event->Time_From)
+                                && ($q->Time_To >= $event->Time_To))
+                            || (($q->Time_To >= $event->Time_From) && ($q->Time_From <= $event->Time_From)
+                                && ($q->Time_To <= $event->Time_To)))
+                        {
+                            Session::flash('flash_message', 'The hall is reserved in this date & time .. Plz choose another hall or another time & date');
 
-            return redirect('/Schadule');
-            
-        }
-        catch(Exception $e) 
-        {
-            Session::flash('flash_message', 'Invalid Data');
-        }
-       */
+                            return redirect('/create');
+                        }
+                    }
+                }
+                    $event->save();
+
+                    Session::flash('flash_message', 'Event successfully added!');
+
+                    return redirect('/Schadule');
+             }
+            else
+            {
+                $event->save();
+
+                Session::flash('flash_message', 'Event successfully added!');
+
+                return redirect('/Schadule');
+            }
     }
 
     /**

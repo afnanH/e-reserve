@@ -65,9 +65,13 @@
                         center: 'title',
                         right: 'month agendaWeek agendaDay '
                         },
-                        editable: false,
-                        droppable: true,
-
+                        defaultView: 'month',
+                         dayClick: function(date, allDay, jsEvent, view) {
+                            if (view.name === "month") {
+                                $('#calendar'+ hallsID[counter]).fullCalendar('gotoDate', date);
+                                $('#calendar'+ hallsID[counter]).fullCalendar('changeView', 'agendaDay');
+                            }
+                        },
                     eventMouseover: function (data, event, view) {
 
                         tooltip = '<div class="tooltiptopicevent" style="color:#fff;width:auto;height:auto;background:#841851;position:absolute;z-index:10001;padding:10px 10px 10px 10px ;  line-height: 200%;">' + 'title ' + ': ' + data.title + '<br/>start:' + moment(data.start).format('DD-MM-YYYY HH:mm') + '<br/>end:' + moment(data.end).format('DD-MM-YYYY HH:mm') +'</div>';
